@@ -1,0 +1,93 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<dom-module id="iris-pagination-control">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+
+    <div class="service-pagination-controll">
+      <paper-button raised on-click="paginationPrevious" disabled$="{{!canPrevious(pages,currentPage)}}">
+        <iron-icon icon="icons:chevron-left">
+      </paper-button>
+
+      <div class="full-paginator" hidden$="{{!numbers}}">
+        <template is="dom-repeat" items="{{getPageCount(pages,currentPage,currentGroup)}}">
+          <paper-button raised class$="{{item.active}}" on-click="paginationPage">
+            {{item.label}}
+          </paper-button>
+        </template>
+      </div>
+
+      <paper-button raised on-click="paginationNext" disabled$="{{!canNext(pages,currentPage)}}">
+        <iron-icon icon="icons:chevron-right">
+      </paper-button>
+    </div>
+  </template>
+
+  <script>
+    'use strict';
+
+    (function() {
+      Polymer({
+        is: 'iris-pagination-control',
+        properties: {
+          pages: {
+            type: Object,
+            value: {}
+          },
+          currentPage: {
+            type: Number,
+            notify: true,
+            value: 0
+          },
+          currentGroup: {
+            type: String,
+            notify: true,
+            value: 'root'
+          },
+          numbers: {
+            type: Boolean,
+            value: true
+          }
+        },
+        getPageCount(pages, number, group) {
+          if (_.isEmpty(pages)) return [];
+          return _.map(_.range(1, pages[group].length + 1), (label) => {
+            return {
+              label: label,
+              active: label - 1 === number ? 'acitve' : ''
+            }
+          });
+        },
+        canPrevious(pages, currentPage) {
+          return currentPage !== 0;
+        },
+        canNext(pages, currentPage) {
+          if (_.isEmpty(pages)) return false
+          let length = pages[this.currentGroup].length;
+          return currentPage !== length - 1;
+        },
+        paginationPage(e) {
+          let model = e.model;
+          this.set('currentPage', model.index);
+        },
+        paginationPrevious() {
+          this.set('currentPage', this.currentPage - 1);
+        },
+        paginationNext() {
+          this.set('currentPage', this.currentPage + 1);
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

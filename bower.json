@@ -1,0 +1,24 @@
+{
+  "name": "iris-polymer-service-pages",
+  "homepage": "https://github.com/sdk-group/iris-polymer-service-pages",
+  "authors": [
+    "artificial-life <proteus.protocol@gmail.com>"
+  ],
+  "description": "service pagination",
+  "main": "iris-service-page.html",
+  "moduleType": [],
+  "keywords": [
+    "pagination",
+    "services",
+    "terminal",
+    "iris"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
