@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
@@ -12,19 +12,72 @@
     <style>
       :host {
         display: block;
+        height: 100%;
+      }
+      
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        height: 80%;
+      }
+      
+      .service-pagination-controll {
+        position: relative;
+        flex-direction: row;
+        height: 10%;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .button-container paper-button {
+        width: 32%;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: none;
+        font-size: 20px;
+      }
+      
+      .service-pagination-controll iris-pagination-control {
+        display: flex;
+        justify-content: center;
+      }
+      
+      .service-pagination-controll paper-icon-button.back {
+        position: absolute;
+        right: 0;
+        border-radius: 15px;
+      }
+      
+      .service-pagination-controll paper-icon-button {
+        height: 100px;
+        width: 100px;
+      }
+      
+      .service-pagination-controll paper-icon-button.back,
+      .service-pagination-controll::content paper-icon-button {
+        border: 3px solid;
+      }
+      
+      .service-pagination-controll::content paper-icon-button {
+        height: 100px;
+        width: 100px;
+        border-radius: 50%;
       }
     </style>
-    <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
-      <paper-button raised on-click="buttonAction">
-        {{item.label}}
-      </paper-button>
-    </template>
+    <div class="button-container">
+      <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
+        <paper-button raised on-click="buttonAction">
+          {{item.label}}
+        </paper-button>
+      </template>
+    </div>
 
     <div class="service-pagination-controll">
-      <paper-button raised on-click="paginationBack" hidden$="{{!canGoBack(pages,currentGroup)}}">
-        Назад
-      </paper-button>
       <iris-pagination-control current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
+      <paper-icon-button icon="subdirectory-arrow-left" class="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
     </div>
   </template>
 
@@ -36,53 +89,100 @@
       root: [
         [{
           type: 'service',
-          label: 'Сервис 1',
-          id: '111'
+          label: 'Выдача результатов',
+          id: '1'
+        }, {
+          type: 'service',
+          label: 'Гражданство',
+          id: '2'
+        }, {
+          type: 'service',
+          label: 'Здравоохранение',
+          id: '3'
+        }, {
+          type: 'service',
+          label: 'Земельно-имущественные отношения',
+          id: '4'
+        }, {
+          type: 'service',
+          label: 'Культура и искусство',
+          id: '5'
+        }, {
+          type: 'service',
+          label: 'Налоги и сборы (штрафы)',
+          id: '6'
+        }, {
+          type: 'service',
+          label: 'Образование',
+          id: '6'
+        }, {
+          type: 'service',
+          label: 'Производство и торговля',
+          id: '7'
+        }, {
+          type: 'service',
+          label: 'Семья',
+          id: '8'
+        }, {
+          type: 'service',
+          label: 'Социальное обеспечение',
+          id: '9'
+        }, {
+          type: 'service',
+          label: 'Спорт и туризм',
+          id: '10'
+        }, {
+          type: 'service',
+          label: 'Транспорт и связь',
+          id: '11'
+        }, {
+          type: 'service',
+          label: 'Труд и занятость',
+          id: '12'
+        }, {
+          type: 'service',
+          label: 'Экология',
+          id: '13'
         }, {
           type: 'group',
-          label: 'Группа 1',
-          id: 'group1'
+          label: 'Прочее',
+          id: 'other'
         }],
         [{
           type: 'service',
-          label: 'Сервис 2',
-          id: '111'
+          label: 'Лень и прокастинация',
+          id: '15'
         }, {
           type: 'service',
-          label: 'Сервис 3',
-          id: '2222'
+          label: 'Загрязнение',
+          id: '16'
+        }, {
+          type: 'service',
+          label: 'Алкоголизм и домоседство',
+          id: '17'
+        }, {
+          type: 'service',
+          label: 'Суровое выживание',
+          id: '18'
+        }, {
+          type: 'service',
+          label: 'Тлен и безысходность',
+          id: '19'
+        }, {
+          type: 'service',
+          label: 'Ад и погибель',
+          id: '20'
+        }, {
+          type: 'service',
+          label: 'Одиночество',
+          id: '21'
         }]
       ],
-      group1: [
+      other: [
         [{
           type: 'service',
-          label: 'Сервис 1',
-          id: '111'
-        }, {
-          type: 'service',
-          label: 'Сервис 5',
-          id: '111'
-        }],
-        [{
-          type: 'service',
-          label: 'Сервис 6',
-          id: '111'
-        }],
-        [{
-          type: 'group',
-          label: 'Гурппа 2',
-          id: 'group2'
-        }]
-      ],
-      group2: [
-        [{
-          type: 'service',
-          label: 'Сервис 7',
-          id: '111'
-        }, {
-          type: 'service',
-          label: 'Сервис 8',
-          id: '111'
+          label: 'Продажа бесссмертной души',
+          id: '14'
         }]
       ]
     };
@@ -105,7 +205,7 @@
           },
           numbers: {
             type: Boolean,
-            value: true
+            value: false
           }
         },
         ready() {
