@@ -30,7 +30,7 @@
         </template>
       </div>
 
-      <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage)}}">
+      <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage,currentGroup)}}">
       </paper-icon-button>
     </div>
   </template>
@@ -73,9 +73,9 @@
         canPrevious(pages, currentPage) {
           return currentPage !== 0;
         },
-        canNext(pages, currentPage) {
+        canNext(pages, currentPage, currentGroup) {
           if (_.isEmpty(pages)) return false
-          let length = pages[this.currentGroup].length;
+          let length = pages[currentGroup].length;
           return currentPage !== length - 1;
         },
         paginationPage(e) {
