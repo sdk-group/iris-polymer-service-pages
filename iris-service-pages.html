@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="iris-pagination-control.html">
+<link rel="import" href="../../bower_components/iris-polymer-iconset/iris-iconset.html">
 
 <dom-module id="iris-service-pages">
   <template>
@@ -83,6 +84,8 @@
         border-radius: 5px;
       }
     </style>
+
+
     <div class="button-container">
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
 
@@ -97,7 +100,7 @@
 
     <footer class="service-pagination-controll">
       <iris-pagination-control current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
-      <paper-icon-button icon="subdirectory-arrow-left" class="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
+      <paper-icon-button icon="iris:arrow-back" class="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
     </footer>
   </template>
 
@@ -156,6 +159,13 @@
           let back = this.path.pop();
           this.set('currentGroup', back.group);
           this.set('currentPage', back.page);
+        },
+        reset() {
+          this.path = [];
+          _.forEach(this.querySelectorAll('paper-checkbox'), (cb) => cb.removeAttribute('checked'));
+
+          this.set('currentGroup', 'root');
+          this.set('currentPage', 0);
         }
       });
     })();
