@@ -14,21 +14,21 @@
     <style include="shared-styles"></style>
     <style>
       :host {
-        display: block;
-        height: 100%;
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
       }
       
       .button-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        height: 80%;
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        @apply(--layout-justified);
+        @apply(--layout-wrap);
       }
       
       .service-pagination-controll {
         position: relative;
         flex-direction: row;
-        height: 10%;
+        height: 100px;
         display: flex;
         justify-content: center;
       }
@@ -70,10 +70,6 @@
         text-transform: none;
         @apply(--service-checkbox);
       }
-      
-      paper-checkbox::shadow #checkbox {
-        @apply(--service-checkbox-borders);
-      }
     </style>
 
 
@@ -91,7 +87,7 @@
 
     <footer class="service-pagination-controll">
       <iris-pagination-control current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
-      <paper-icon-button icon="iris:arrow-back" id="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
+      <paper-icon-button icon="home" id="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
     </footer>
   </template>
 
