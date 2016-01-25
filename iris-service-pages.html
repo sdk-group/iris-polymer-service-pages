@@ -25,12 +25,8 @@
         @apply(--layout-wrap);
       }
       
-      .service-pagination-controll {
-        position: relative;
-        flex-direction: row;
+      iris-pagination-control {
         height: 100px;
-        display: flex;
-        justify-content: center;
       }
       
       .button-container paper-button {
@@ -41,25 +37,8 @@
         justify-content: center;
         text-transform: none;
         @apply(--service-button);
-      }
-      
-      .service-pagination-controll iris-pagination-control {
-        display: flex;
-        justify-content: center;
-      }
-      
-      .service-pagination-controll paper-icon-button[disabled] {
-        @apply(--pagination-icon-buttons-disabled);
-      }
-      
-      .service-pagination-controll paper-icon-button {
-        @apply(--pagination-icon-buttons);
-      }
-      
-      .service-pagination-controll paper-icon-button#back {
-        position: absolute;
-        right: 0;
-        @apply(--pagination-icon-button-back);
+        margin-left: 0;
+        margin-right: 0;
       }
       
       .button-container paper-checkbox {
@@ -75,20 +54,16 @@
 
     <div class="button-container">
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
-
-        <template is="dom-if" if="{{!item.is_service}}">
-          <paper-button raised on-click="groupAction"> {{item.label}} </paper-button>
+        <template is="dom-if" if="[[!item.is_service]]">
+          <paper-button raised on-click="groupAction"> [[item.label]] </paper-button>
         </template>
-        <template is="dom-if" if="{{item.is_service}}">
-          <paper-checkbox class="red" on-click="serviceAction">{{item.label}}</paper-checkbox>
+        <template is="dom-if" if="[[item.is_service]]">
+          <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox>
         </template>
       </template>
     </div>
 
-    <footer class="service-pagination-controll">
-      <iris-pagination-control current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
-      <paper-icon-button icon="home" id="back" on-click="paginationBack" disabled$="{{!canGoBack(pages,currentGroup)}}"> </paper-icon-button>
-    </footer>
+    <iris-pagination-control id="pagination" current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
   </template>
 
   <script>
@@ -118,41 +93,20 @@
             value: false
           }
         },
-        ready() {
-          this.path = [];
-        },
         getPage(pages, number, group) {
           return _.isEmpty(pages) ? [] : pages[group][number];
         },
         groupAction(e) {
           let model = e.model;
-
-          this.path.push({
-            page: this.currentPage,
-            group: this.currentGroup
-          });
-
-          this.set('currentGroup', model.item.id);
-          this.set('currentPage', 0);
+          this.$.pagination.levelDown(model.item);
         },
         serviceAction(e) {
           let model = e.model;
-          this.fire('service-select', model.item.id);
-        },
-        canGoBack(pages, group) {
-          return group !== 'root';
-        },
-        paginationBack() {
-          let back = this.path.pop();
-          this.set('currentGroup', back.group);
-          this.set('currentPage', back.page);
+          this.fire('service-select', e.model.item.id);
         },
         reset() {
-          this.path = [];
           _.forEach(this.querySelectorAll('paper-checkbox'), (cb) => cb.removeAttribute('checked'));
-
-          this.set('currentGroup', 'root');
-          this.set('currentPage', 0);
+          this.$.pagination.reset();
         }
       });
     })();

@@ -8,8 +8,11 @@
   <template>
     <style include="shared-styles"></style>
     <style>
-      :host {
-        display: inline-block;
+      :host {}
+      
+      .service-pagination-controll {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
       }
       
       #previous {
@@ -27,9 +30,8 @@
 
 
     <div class="service-pagination-controll">
-      <paper-icon-button id="previous" icon="icons:chevron-left" on-click="paginationPrevious" disabled$="{{!canPrevious(pages,currentPage)}}">
-      </paper-icon-button>
 
+      <paper-icon-button id="previous" icon="icons:chevron-left" on-click="paginationPrevious" disabled$="{{!canPrevious(pages,currentPage, currentGroup)}}"> </paper-icon-button>
       <div class="full-paginator" hidden$="{{!numbers}}">
         <template is="dom-repeat" items="{{getPageCount(pages,currentPage,currentGroup)}}">
           <paper-button raised class$="{{item.active}}" on-click="paginationPage">
@@ -38,8 +40,8 @@
         </template>
       </div>
 
-      <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage,currentGroup)}}">
-      </paper-icon-button>
+      <paper-icon-button icon="home" id="back" on-click="paginationHome" disabled$="{{!canHome(currentPage,currentGroup)}}"> </paper-icon-button>
+      <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage,currentGroup)}}"> </paper-icon-button>
     </div>
   </template>
 
@@ -69,6 +71,29 @@
             value: true
           }
         },
+        ready() {
+          this.path = [];
+        },
+        canHome(currentPage, group) {
+          return group !== 'root' || currentPage !== 0;
+        },
+        paginationHome() {
+          this.set('currentGroup', 'root');
+          this.set('currentPage', 0);
+        },
+        reset() {
+          this.path = [];
+          this.set('currentGroup', 'root');
+          this.set('currentPage', 0);
+        },
+        levelDown(group) {
+          this.push('path', {
+            page: this.currentPage,
+            group: this.currentGroup
+          });
+          this.set('currentGroup', group.id);
+          this.set('currentPage', 0);
+        },
         getPageCount(pages, number, group) {
           if (_.isEmpty(pages)) return [];
           return _.map(_.range(1, pages[group].length + 1), (label) => {
@@ -78,8 +103,9 @@
             }
           });
         },
-        canPrevious(pages, currentPage) {
-          return currentPage !== 0;
+        canPrevious(pages, currentPage, currentGroup) {
+
+          return currentPage !== 0 || currentGroup !== 'root';
         },
         canNext(pages, currentPage, currentGroup) {
           if (_.isEmpty(pages)) return false
@@ -91,7 +117,13 @@
           this.set('currentPage', model.index);
         },
         paginationPrevious() {
-          this.set('currentPage', this.currentPage - 1);
+          if (this.currentPage > 0) {
+            this.set('currentPage', this.currentPage - 1);
+            return;
+          }
+          let route = this.pop('path');
+          this.set('currentGroup', route.group);
+          this.set('currentPage', route.page);
         },
         paginationNext() {
           this.set('currentPage', this.currentPage + 1);
