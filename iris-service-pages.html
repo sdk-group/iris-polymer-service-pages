@@ -54,11 +54,11 @@
 
     <div class="button-container">
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
-        <template is="dom-if" if="[[!item.is_service]]">
-          <paper-button raised on-click="groupAction"> [[item.label]] </paper-button>
+        <template is="dom-if" if="[[!isService(item)]]">
+          <paper-button raised on-click="groupAction"> [[item.service_group_label]] </paper-button>
         </template>
-        <template is="dom-if" if="[[item.is_service]]">
-          <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox>
+        <template is="dom-if" if="[[isService(item)]]">
+          <paper-checkbox class="red" on-click="serviceAction">[[item.service_label]]</paper-checkbox>
         </template>
       </template>
     </div>
@@ -103,6 +103,9 @@
         serviceAction(e) {
           let model = e.model;
           this.fire('service-select', e.model.item.id);
+        },
+        isService(item) {
+          return item.ldtype === 'Service'
         },
         reset() {
           _.forEach(this.querySelectorAll('paper-checkbox'), (cb) => cb.removeAttribute('checked'));
