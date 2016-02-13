@@ -15,10 +15,6 @@
         @apply(--layout-justified);
       }
       
-      #previous {
-        margin-right: 45px;
-      }
-      
       paper-icon-button {
         @apply(--pagination-icon-buttons);
       }
@@ -40,7 +36,7 @@
         </template>
       </div>
 
-      <paper-icon-button icon="home" id="back" on-click="paginationHome" disabled$="{{!canHome(currentPage,currentGroup)}}"> </paper-icon-button>
+      <paper-icon-button icon="home" id="back" on-click="paginationHome" disabled$="[[!canHome(currentPage, group)]]"> </paper-icon-button>
       <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage,currentGroup)}}"> </paper-icon-button>
     </div>
   </template>
@@ -69,17 +65,22 @@
           numbers: {
             type: Boolean,
             value: true
+          },
+          hasLanding: {
+            type: Boolean,
+            value: true
           }
         },
         ready() {
           this.path = [];
         },
         canHome(currentPage, group) {
-          return group !== 'root' || currentPage !== 0;
+          return group !== 'root' || currentPage !== 0 || this.hasLanding;
         },
         paginationHome() {
           this.set('currentGroup', 'root');
           this.set('currentPage', 0);
+          this.fire('home');
         },
         reset() {
           this.path = [];
@@ -105,7 +106,8 @@
         },
         canPrevious(pages, currentPage, currentGroup) {
 
-          return currentPage !== 0 || currentGroup !== 'root';
+          return currentPage !== 0 || currentGroup !== 'root' || this.hasLanding;
+
         },
         canNext(pages, currentPage, currentGroup) {
           if (_.isEmpty(pages)) return false
@@ -117,6 +119,11 @@
           this.set('currentPage', model.index);
         },
         paginationPrevious() {
+          if (this.currentPage == 0 && this.currentGroup == 'root') {
+            this.fire('home');
+            return;
+          }
+
           if (this.currentPage > 0) {
             this.set('currentPage', this.currentPage - 1);
             return;
