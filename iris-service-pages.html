@@ -15,13 +15,13 @@
     <style>
       :host {
         @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply(--layout-flex-auto);
       }
       
       .button-container {
         @apply(--layout-horizontal);
-        @apply(--layout-flex);
-        @apply(--layout-justified);
+        @apply(--layout-flex-auto);
+        @apply(--layout-around-justified);
         @apply(--layout-wrap);
       }
       
@@ -55,10 +55,11 @@
     <div class="button-container">
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
         <template is="dom-if" if="[[!isService(item)]]">
-          <paper-button raised on-click="groupAction"> [[item.label]] </paper-button>
+          <paper-button raised on-click="Action"> [[item.label]] </paper-button>
         </template>
         <template is="dom-if" if="[[isService(item)]]">
-          <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox>
+          <!--    <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox> -->
+          <paper-button raised on-click="Action"> [[item.label]] </paper-button>
         </template>
       </template>
     </div>
@@ -95,6 +96,12 @@
         },
         getPage(pages, number, group) {
           return _.isEmpty(pages) ? [] : pages[group][number];
+        },
+        Action(e) {
+          if (e.model.item.type == "Service") {
+            return this.serviceAction(e);
+          }
+          this.groupAction(e)
         },
         groupAction(e) {
           let model = e.model;
