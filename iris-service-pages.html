@@ -17,18 +17,18 @@
         @apply(--layout-vertical);
         @apply(--layout-flex-auto);
       }
-      
+
       .button-container {
         @apply(--layout-horizontal);
         @apply(--layout-flex-auto);
         @apply(--layout-around-justified);
         @apply(--layout-wrap);
       }
-      
+
       iris-pagination-control {
         height: 100px;
       }
-      
+
       .button-container paper-button {
         width: 32%;
         margin-bottom: 15px;
@@ -40,7 +40,7 @@
         margin-left: 0;
         margin-right: 0;
       }
-      
+
       .button-container paper-checkbox {
         width: 45%;
         margin-bottom: 15px;
@@ -49,29 +49,33 @@
         text-transform: none;
         @apply(--service-checkbox);
       }
-    </style>
 
+    </style>
+    <iris-terminal id="terminal" on-ready="terminalReady"></iris-terminal>
 
     <div class="button-container">
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
         <template is="dom-if" if="[[!isService(item)]]">
-          <paper-button raised on-click="Action"> [[item.label]] </paper-button>
+          <paper-button raised on-click="Action">
+            [[item.label]]
+          </paper-button>
         </template>
         <template is="dom-if" if="[[isService(item)]]">
           <!--    <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox> -->
-          <paper-button raised on-click="Action"> [[item.label]] </paper-button>
+          <paper-button raised on-click="Action">
+            [[item.label]]
+          </paper-button>
         </template>
       </template>
     </div>
 
-    <iris-pagination-control id="pagination" current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
+    <iris-pagination-control id="pagination" has-landing="{{hasLanding}}" current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
   </template>
 
   <script>
     'use strict';
 
-
-    (function() {
+    (function () {
       Polymer({
         is: 'iris-service-pages',
         properties: {
@@ -92,10 +96,20 @@
           numbers: {
             type: Boolean,
             value: false
+          },
+          hasLanding: {
+            type: Boolean,
+            notify: true,
+            value: false
           }
         },
+        terminalReady() {
+          this.set('hasLanding', (this.$.terminal.getBookingMethods() === 'all'))
+        },
         getPage(pages, number, group) {
-          return _.isEmpty(pages) ? [] : pages[group][number];
+          return _.isEmpty(pages)
+            ? []
+            : pages[group][number];
         },
         Action(e) {
           if (e.model.item.type == "Service") {
