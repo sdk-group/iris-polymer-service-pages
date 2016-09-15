@@ -23,9 +23,23 @@
         @apply(--pagination-icon-buttons-disabled);
       }
 
+      .actions iron-icon {
+        @apply(--pagination-icon-buttons);
+      }
+
+      .actions a > iron-icon {
+        background: none;
+        padding: 0 30px;
+        border: none;
+      }
+
+      div.service-pagination-controll.actions {
+        justify-content: center;
+      }
+
     </style>
 
-    <div class="service-pagination-controll">
+    <div class="service-pagination-controll" hidden$="[[noLandingAndFirst(currentPage, currentGroup, hasLanding)]]">
 
       <paper-icon-button id="previous" icon="icons:chevron-left" on-click="paginationPrevious" disabled$="{{!canPrevious(pages,currentPage, currentGroup)}}"></paper-icon-button>
       <div class="full-paginator" hidden$="{{!numbers}}">
@@ -36,8 +50,27 @@
         </template>
       </div>
 
-      <paper-icon-button icon="home" id="back" on-click="paginationHome" disabled$="[[!canHome(currentPage, group,hasLanding)]]"></paper-icon-button>
+      <template is="dom-if" if="[[isSetSelected]]">
+        <paper-icon-button icon="check" on-tap="selectionComplete"></paper-icon-button>
+      </template>
+
+      <template is="dom-if" if="[[!isSetSelected]]">
+        <paper-icon-button icon="home" id="back" on-click="paginationHome" disabled$="[[!canHome(currentPage, currentGroup,hasLanding)]]"></paper-icon-button>
+      </template>
+
       <paper-icon-button id="next" icon="icons:chevron-right" on-click="paginationNext" disabled$="{{!canNext(pages,currentPage,currentGroup)}}"></paper-icon-button>
+    </div>
+
+    <div class="actions service-pagination-controll " hidden$="[[!noLandingAndFirst(currentPage,currentGroup, hasLanding)]]">
+      <a href$="{{baseUrl}}pick-ticket/for/register" onmousedown="return false">
+        <iron-icon icon="schedule"></iron-icon>
+      </a>
+      <a href$="{{baseUrl}}pick-ticket/for/info" onmousedown="return false">
+        <iron-icon icon="info-outline"></iron-icon>
+      </a>
+      <a href$="{{baseUrl}}pick-ticket/for/qa" hidden$="[[!qaEnabled]]" onmousedown="return false">
+        <iron-icon icon="editor:insert-emoticon"></iron-icon>
+      </a>
     </div>
   </template>
 
@@ -69,19 +102,30 @@
           hasLanding: {
             type: Boolean,
             value: true
+          },
+          isSetSelected: {
+            type: Boolean,
+            value: false
           }
         },
         ready() {
           this.path = [];
+          this.baseUrl = app.baseUrl;
+        },
+        noLandingAndFirst(currentPage, group, hasLanding) {
+          console.log(group, currentPage, hasLanding);
+          return group == 'root' && currentPage == 0 && !hasLanding;
         },
         canHome(currentPage, group) {
-          console.log('canHome', group !== 'root', currentPage !== 0, this.hasLanding);
           return group !== 'root' || currentPage !== 0 || this.hasLanding;
         },
         paginationHome() {
           this.set('currentGroup', 'root');
           this.set('currentPage', 0);
           this.fire('home');
+        },
+        selectionComplete() {
+          this.fire('selection-complete');
         },
         reset() {
           this.path = [];
@@ -109,9 +153,7 @@
           });
         },
         canPrevious(pages, currentPage, currentGroup) {
-
           return currentPage !== 0 || currentGroup !== 'root' || this.hasLanding;
-
         },
         canNext(pages, currentPage, currentGroup) {
           if (_.isEmpty(pages))
@@ -139,6 +181,7 @@
         },
         paginationNext() {
           this.set('currentPage', this.currentPage + 1);
+
         }
       });
     })();

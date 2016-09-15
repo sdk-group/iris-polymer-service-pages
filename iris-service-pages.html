@@ -42,13 +42,23 @@
       }
 
       .button-container paper-checkbox {
+        width: 32%;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        text-transform: none;
+        @apply(--service-checkbox);
+
+      }
+
+      /*.button-container paper-checkbox {
         width: 45%;
         margin-bottom: 15px;
         display: flex;
         align-items: center;
         text-transform: none;
         @apply(--service-checkbox);
-      }
+      }*/
 
     </style>
     <iris-terminal id="terminal" on-ready="terminalReady"></iris-terminal>
@@ -60,16 +70,27 @@
             [[item.label]]
           </paper-button>
         </template>
-        <template is="dom-if" if="[[isService(item)]]">
-          <!--    <paper-checkbox class="red" on-click="serviceAction">[[item.label]]</paper-checkbox> -->
+        <template is="dom-if" if="[[isServiceButton(item, isMulti)]]">
           <paper-button raised on-click="Action">
             [[item.label]]
           </paper-button>
         </template>
+
+        <template is="dom-if" if="[[isServiceCheck(item, isMulti)]]">
+          <paper-checkbox class="red" on-click="serviceMultiAction" checked="[[isChecked(selectedItems.splices,item.id)]]">[[item.label]]</paper-checkbox>
+        </template>
       </template>
     </div>
 
-    <iris-pagination-control id="pagination" has-landing="{{hasLanding}}" current-page="{{currentPage}}" current-group="{{currentGroup}}" numbers="[[numbers]]" pages="[[pages]]"></iris-pagination-control>
+    <iris-pagination-control
+      id="pagination"
+      has-landing="{{hasLanding}}"
+      is-set-selected="[[isSetSelected(selectedItems.splices,isMulti)]]"
+      current-page="{{currentPage}}"
+      current-group="{{currentGroup}}"
+      numbers="[[numbers]]"
+      pages="[[pages]]"
+      on-selection-complete="selectionComplete"></iris-pagination-control>
   </template>
 
   <script>
@@ -101,6 +122,10 @@
             type: Boolean,
             notify: true,
             value: false
+          },
+          isMulti: {
+            type: Boolean,
+            value: false
           }
         },
         terminalReady() {
@@ -125,12 +150,40 @@
           let model = e.model;
           this.fire('service-select', e.model.item.id);
         },
+        serviceMultiAction(e) {
+          let model = e.model;
+          var index = model.item.id;
+          console.log();
+          if (e.target.checked || e.target.parentNode.checked) {
+            this.push('selectedItems', index);
+          } else {
+            this.arrayDelete('selectedItems', index);
+          }
+          console.log(this.selectedItems);
+          // this.fire('service-select', e.model.item.id);
+        },
         isService(item) {
           return item.type === 'Service'
         },
+        isServiceButton(item, multi) {
+          return this.isService(item) && !multi;
+        },
+        isServiceCheck(item, multi) {
+          return this.isService(item) && multi;
+        },
+        isChecked(sp, id) {
+          return ~ this.selectedItems.indexOf(id);
+        },
+        isSetSelected(splices, isMulti) {
+          return isMulti && this.selectedItems.length > 0
+        },
         reset() {
+          this.set('selectedItems', []);
           _.forEach(this.querySelectorAll('paper-checkbox'), (cb) => cb.removeAttribute('checked'));
           this.$.pagination.reset();
+        },
+        selectionComplete() {
+          this.fire('service-select', this.selectedItems);
         }
       });
     })();
