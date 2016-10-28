@@ -67,17 +67,17 @@
       <template is="dom-repeat" items="{{getPage(pages,currentPage,currentGroup)}}">
         <template is="dom-if" if="[[!isService(item)]]">
           <paper-button raised on-click="Action">
-            [[item.label]]
+            [[computeLabel(item)]]
           </paper-button>
         </template>
         <template is="dom-if" if="[[isServiceButton(item, isMulti)]]">
           <paper-button raised on-click="Action">
-            [[item.label]]
+            [[computeLabel(item)]]
           </paper-button>
         </template>
 
         <template is="dom-if" if="[[isServiceCheck(item, isMulti)]]">
-          <paper-checkbox class="red" on-click="serviceMultiAction" checked="[[isChecked(selectedItems.splices,item.id)]]">[[item.label]]</paper-checkbox>
+          <paper-checkbox class="red" on-click="serviceMultiAction" checked="[[isChecked(selectedItems.splices,item.id)]]">[[computeLabel(item)]]</paper-checkbox>
         </template>
       </template>
     </div>
@@ -131,6 +131,9 @@
         terminalReady() {
           this.set('hasLanding', (this.$.terminal.getBookingMethods() === 'all'))
         },
+        computeLabel(item) {
+          return item.short_label || item.label;
+        },
         getPage(pages, number, group) {
           return _.isEmpty(pages)
             ? []
@@ -153,13 +156,12 @@
         serviceMultiAction(e) {
           let model = e.model;
           var index = model.item.id;
-          console.log();
+
           if (e.target.checked || e.target.parentNode.checked) {
             this.push('selectedItems', index);
           } else {
             this.arrayDelete('selectedItems', index);
           }
-          console.log(this.selectedItems);
           // this.fire('service-select', e.model.item.id);
         },
         isService(item) {
