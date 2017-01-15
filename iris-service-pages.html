@@ -39,6 +39,7 @@
         @apply(--service-button);
         margin-left: 0;
         margin-right: 0;
+        text-align: center;
       }
 
       .button-container paper-checkbox {
@@ -140,7 +141,7 @@
             : pages[group][number];
         },
         Action(e) {
-          if (e.model.item.type == "Service") {
+          if (this.isService(e.model.item)) {
             return this.serviceAction(e);
           }
           this.groupAction(e)
@@ -165,7 +166,7 @@
           // this.fire('service-select', e.model.item.id);
         },
         isService(item) {
-          return item.type === 'Service'
+          return item.type === 'Service' || item.type === 'GlobalService';
         },
         isServiceButton(item, multi) {
           return this.isService(item) && !multi;
